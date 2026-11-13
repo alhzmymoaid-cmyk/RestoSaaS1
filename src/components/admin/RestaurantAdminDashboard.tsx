@@ -562,6 +562,15 @@ export default function RestaurantAdminDashboard({ initialBundle }: Props) {
     e.preventDefault();
     if (!prodName.trim()) return;
 
+    const targetCategoryId = prodCategory || bundle.categories[0]?.id;
+    const belongsToThisRestaurant = bundle.categories.some(
+      (c) => c.id === targetCategoryId && c.restaurant_id === bundle.restaurant.id
+    );
+    if (!belongsToThisRestaurant) {
+      notifyError('خطأ أمني: لا يمكن ربط المنتج بقسم لا ينتمي إلى هذا المطعم.');
+      return;
+    }
+
     const parsedSizes = parseSizesInput(prodSizesText);
     const parsedAddons = parseAddonsInput(prodAddonsText);
     const supabase = createClient();

@@ -221,7 +221,7 @@ BEGIN
     '/images/burger-house/interior-lounge.jpg',
     '#10B981', '#34D399', '#6EE7B7', '#061512', '#0D2621',
     'Amiri', 'Tajawal', 'dark',
-    '966570207432', '0570207432',
+    '966535717670', '0535717670',
     'حي البغدادية الغربية، شارع حمزة شحاتة، جدة',
     'جدة', 0.00, 12390, true
   ) ON CONFLICT (slug) DO UPDATE

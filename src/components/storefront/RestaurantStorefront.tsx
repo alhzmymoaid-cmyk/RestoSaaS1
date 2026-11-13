@@ -129,7 +129,16 @@ export default function RestaurantStorefront({ initialBundle }: Props) {
 
     const supabase = createClient();
     if (supabase) {
-      await supabase.rpc('increment_product_view', { prod_id: product.id });
+      try {
+        const viewKey = `restosaas_prod_view_${product.id}`;
+        const lastViewTs = Number(sessionStorage.getItem(viewKey) || '0');
+        if (Date.now() - lastViewTs > 30000) {
+          sessionStorage.setItem(viewKey, String(Date.now()));
+          await supabase.rpc('increment_product_view', { prod_id: product.id });
+        }
+      } catch {
+        await supabase.rpc('increment_product_view', { prod_id: product.id });
+      }
     }
   };
 
@@ -253,7 +262,7 @@ export default function RestaurantStorefront({ initialBundle }: Props) {
     const cleanPhone = customerPhone.replace(/[^0-9+]/g, '');
 
     if (cleanName.length < 2) {
-      setCheckoutError('الرجاء إدخال الاسم الكامل (حرفين على الأقل) لإتمام الطلب.');
+      setCheckoutError('اسم العميل حقل إجباري (يرجى إدخال الاسم الكامل، حرفين على الأقل) قبل إرسال الطلب.');
       return;
     }
 
@@ -273,7 +282,7 @@ export default function RestaurantStorefront({ initialBundle }: Props) {
         JSON.stringify({ name: cleanName, phone: cleanPhone, address: customerAddress.trim() })
       );
     } catch {
-      // ignore
+      // ignore storage errors
     }
 
     setIsSubmittingOrder(true);
@@ -285,6 +294,7 @@ export default function RestaurantStorefront({ initialBundle }: Props) {
         ? 'محلي داخل المطعم'
         : 'توصيل للموقع';
 
+    // إرسال المعرفات والكميات والخيارات للخادم ليقوم الخادم بحساب الأسعار والإجمالي وتوليد رقم الطلب الذري (ORD-YYYYMMDD-001)
     const orderPayload = {
       restaurant_id: restaurant.id,
       customer_name: cleanName,
@@ -294,19 +304,33 @@ export default function RestaurantStorefront({ initialBundle }: Props) {
       notes: orderNotes.trim(),
       items: cart.map((item) => ({
         product_id: item.product.id,
-        product_name: item.product.name,
         size_name: item.selectedSize?.name,
         addons: item.selectedAddons.map((a) => a.name),
         quantity: item.quantity,
-        unit_price: item.unitPrice,
         notes: item.notes,
       })),
-      subtotal: cartSubtotal,
-      delivery_fee: deliveryFee,
-      total: cartTotal,
     };
 
-    let confirmedOrderNumber = `BH-${Math.floor(1000 + Math.random() * 9000)}`;
+    let serverOrder: {
+      order_number: string;
+      customer_name: string;
+      customer_phone: string;
+      customer_address?: string;
+      notes?: string;
+      items: {
+        product_name: string;
+        size_name?: string;
+        addons: string[];
+        quantity: number;
+        unit_price: number;
+        line_total?: number;
+        notes?: string;
+      }[];
+      subtotal: number;
+      delivery_fee: number;
+      total: number;
+      whatsapp_number?: string;
+    } | null = null;
 
     try {
       const res = await fetch('/api/orders', {
@@ -315,53 +339,70 @@ export default function RestaurantStorefront({ initialBundle }: Props) {
         body: JSON.stringify(orderPayload),
       });
       const data = await res.json();
-      if (!res.ok) {
-        setCheckoutError(data.error || 'تعذر حفظ الطلب، يرجى التحقق من البيانات المدخلة.');
+      if (!res.ok || !data.order?.order_number) {
+        setCheckoutError(data.error || 'تعذر إنشاء الطلب وحفظه في الخادم. يرجى المحاولة مرة أخرى.');
         setIsSubmittingOrder(false);
         return;
       }
-      if (data.order?.order_number) {
-        confirmedOrderNumber = data.order.order_number;
-      }
+      serverOrder = data.order;
     } catch {
-      // In offline preview mode, proceed with generated order number
+      setCheckoutError('تعذر الاتصال بالخادم لتأكيد الطلب وتوليد رقم الطلب الرسمي. لا يمكن إرسال الطلب قبل حفظه.');
+      setIsSubmittingOrder(false);
+      return;
     } finally {
       setIsSubmittingOrder(false);
     }
 
+    if (!serverOrder || !serverOrder.order_number || !/^ORD-\d{8}-\d{3,}$/.test(serverOrder.order_number)) {
+      setCheckoutError('لم يتم استلام رقم طلب صالح من الخادم.');
+      return;
+    }
+
     const lines: string[] = [
-      `*طلب جديد #${confirmedOrderNumber} — ${restaurant.name}*`,
+      `*طلب جديد — ${restaurant.name}*`,
+      `*رقم الطلب:* *${serverOrder.order_number}*`,
       `────────────────────`,
-      `*العميل:* ${cleanName}`,
-      `*الجوال:* ${cleanPhone}`,
+      `*اسم العميل:* ${serverOrder.customer_name}`,
+      `*رقم الجوال:* ${serverOrder.customer_phone}`,
       `*نوع الطلب:* ${fulfillmentAr}`,
     ];
-    if (fulfillmentType === 'delivery' && customerAddress.trim()) {
-      lines.push(`*العنوان:* ${customerAddress.trim()}`);
+    if (fulfillmentType === 'delivery' && serverOrder.customer_address) {
+      lines.push(`*عنوان التوصيل:* ${serverOrder.customer_address}`);
     }
     lines.push(`────────────────────`);
-    lines.push(`*الأصناف المطلوبة:*`);
-    cart.forEach((item, idx) => {
-      lines.push(`${idx + 1}. *${item.product.name}* (×${item.quantity}) — ${item.unitPrice * item.quantity} ر.س`);
-      if (item.selectedSize) lines.push(`   • الحجم: ${item.selectedSize.name}`);
-      if (item.selectedAddons.length > 0) {
-        lines.push(`   • الإضافات: ${item.selectedAddons.map((a) => a.name).join('، ')}`);
+    lines.push(`*الأصناف المطلوبة (بالأسعار المعتمدة):*`);
+    serverOrder.items.forEach((item, idx) => {
+      const itemTotal = item.line_total ?? item.unit_price * item.quantity;
+      lines.push(
+        `${idx + 1}. *${item.product_name}* (×${item.quantity} × ${item.unit_price} ر.س) — *${itemTotal} ر.س*`
+      );
+      if (item.size_name) lines.push(`   • الحجم: ${item.size_name}`);
+      if (item.addons && item.addons.length > 0) {
+        lines.push(`   • الإضافات: ${item.addons.join('، ')}`);
       }
       if (item.notes) lines.push(`   • ملاحظة الصنف: ${item.notes}`);
     });
     lines.push(`────────────────────`);
-    lines.push(`*المجموع الفرعي:* ${cartSubtotal} ر.س`);
-    if (deliveryFee > 0) lines.push(`*رسوم التوصيل:* ${deliveryFee} ر.س`);
-    lines.push(`*الإجمالي النهائي:* *${cartTotal} ر.س*`);
-    if (orderNotes.trim()) lines.push(`*ملاحظات عامة:* ${orderNotes.trim()}`);
+    lines.push(`*المجموع الفرعي:* ${serverOrder.subtotal} ر.س`);
+    if (serverOrder.delivery_fee > 0) {
+      lines.push(`*رسوم التوصيل:* ${serverOrder.delivery_fee} ر.س`);
+    }
+    lines.push(`*الإجمالي النهائي المعتمد:* *${serverOrder.total} ر.س*`);
+    if (serverOrder.notes) lines.push(`*ملاحظات عامة:* ${serverOrder.notes}`);
+
+    const targetWhatsApp = (
+      serverOrder.whatsapp_number ||
+      restaurant.whatsapp_number ||
+      '966535717670'
+    ).replace(/[^0-9]/g, '');
 
     const messageText = lines.join('\n');
-    const waUrl = `https://wa.me/${restaurant.whatsapp_number.replace(/[^0-9]/g, '')}?text=${encodeURIComponent(messageText)}`;
+    const waUrl = `https://wa.me/${targetWhatsApp}?text=${encodeURIComponent(messageText)}`;
     window.open(waUrl, '_blank', 'noopener,noreferrer');
 
     setCart([]);
     setIsCartOpen(false);
-    setOrderSuccessToast(`تم تسجيل طلبك (#${confirmedOrderNumber}) وفتح رسالة واتساب بنجاح!`);
+    setOrderSuccessToast(`تم تأكيد وحفظ طلبك برقم (${serverOrder.order_number}) وفتح رسالة واتساب بنجاح!`);
     setTimeout(() => setOrderSuccessToast(null), 5000);
   };
 

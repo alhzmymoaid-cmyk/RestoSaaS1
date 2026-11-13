@@ -66,7 +66,7 @@ export const INITIAL_TENANTS: Record<string, TenantBundle> = {
     },
     banners: [
       {
-        id: 'b1',
+        id: 'b0000001-1111-1111-1111-111111111111',
         restaurant_id: '11111111-1111-1111-1111-111111111111',
         title: 'بوكس الجمعات الملكي (The Royal Feast Box)',
         subtitle: '4 برجر اختياري من الواغيو أو الكريسبي + بطاطس بريسكت بالجبن + 6 تندرز دجاج + 4 صوصات حرفية',
@@ -80,7 +80,7 @@ export const INITIAL_TENANTS: Record<string, TenantBundle> = {
         is_active: true,
       },
       {
-        id: 'b2',
+        id: 'b0000002-1111-1111-1111-111111111111',
         restaurant_id: '11111111-1111-1111-1111-111111111111',
         title: 'إصدار الشيف: بلاك ترفل واغيو رويال',
         subtitle: 'شريحتان من لحم الواغيو الفاخر مع جبن الغرويير السويسري، فطر بري محمص بالزبدة، وأيولي الكمأة السوداء الإيطالية',
@@ -94,7 +94,7 @@ export const INITIAL_TENANTS: Record<string, TenantBundle> = {
         is_active: true,
       },
       {
-        id: 'b3',
+        id: 'b0000003-1111-1111-1111-111111111111',
         restaurant_id: '11111111-1111-1111-1111-111111111111',
         title: 'أجواء استثنائية في صالة برجر هاوس',
         subtitle: 'استمتع بوجبتك أمام المطبخ المفتوح على اللهب الحي في فرع حي الشاطئ بجدة أو اطلب الآن للاستلام السريع',
@@ -110,7 +110,7 @@ export const INITIAL_TENANTS: Record<string, TenantBundle> = {
     ],
     offers: [
       {
-        id: 'off1',
+        id: 'f0000001-1111-1111-1111-111111111111',
         restaurant_id: '11111111-1111-1111-1111-111111111111',
         title: 'وليمة برجر هاوس العائلية',
         description: '2 دبل واغيو سماش + 2 ميبل سيراتشا كريسبي + بطاطس بريسكت حجم عائلي + 4 مشروبات حرفية',
@@ -125,7 +125,7 @@ export const INITIAL_TENANTS: Record<string, TenantBundle> = {
         sort_order: 1,
       },
       {
-        id: 'off2',
+        id: 'f0000002-1111-1111-1111-111111111111',
         restaurant_id: '11111111-1111-1111-1111-111111111111',
         title: 'ثنائي الترفل والسموك هاوس',
         description: 'برجر بلاك ترفل واغيو + برجر سموك هاوس بريسكت + بطاطس البريسكت والجبن + 2 ميلك شيك بلجيكي',
@@ -142,7 +142,7 @@ export const INITIAL_TENANTS: Record<string, TenantBundle> = {
     ],
     categories: [
       {
-        id: 'cat-wagyu',
+        id: '22222222-1111-1111-1111-111111111111',
         restaurant_id: '11111111-1111-1111-1111-111111111111',
         name: 'برجر الواغيو والأنجوس',
         slug: 'wagyu-burgers',
@@ -152,7 +152,7 @@ export const INITIAL_TENANTS: Record<string, TenantBundle> = {
         is_visible: true,
       },
       {
-        id: 'cat-chicken',
+        id: '22222222-2222-1111-1111-111111111111',
         restaurant_id: '11111111-1111-1111-1111-111111111111',
         name: 'برجر الدجاج المقرمش',
         slug: 'crispy-chicken',
@@ -162,7 +162,7 @@ export const INITIAL_TENANTS: Record<string, TenantBundle> = {
         is_visible: true,
       },
       {
-        id: 'cat-boxes',
+        id: '22222222-3333-1111-1111-111111111111',
         restaurant_id: '11111111-1111-1111-1111-111111111111',
         name: 'بوكسات الجمعات والعروض',
         slug: 'sharing-boxes',
@@ -172,7 +172,7 @@ export const INITIAL_TENANTS: Record<string, TenantBundle> = {
         is_visible: true,
       },
       {
-        id: 'cat-sides',
+        id: '22222222-4444-1111-1111-111111111111',
         restaurant_id: '11111111-1111-1111-1111-111111111111',
         name: 'البطاطس المحملة والمقبلات',
         slug: 'loaded-fries-sides',
@@ -182,7 +182,7 @@ export const INITIAL_TENANTS: Record<string, TenantBundle> = {
         is_visible: true,
       },
       {
-        id: 'cat-drinks',
+        id: '22222222-5555-1111-1111-111111111111',
         restaurant_id: '11111111-1111-1111-1111-111111111111',
         name: 'الميلك شيك والموهيتو',
         slug: 'artisan-drinks',
@@ -194,9 +194,9 @@ export const INITIAL_TENANTS: Record<string, TenantBundle> = {
     ],
     products: [
       {
-        id: 'prod-1',
+        id: 'd0000001-1111-1111-1111-111111111111',
         restaurant_id: '11111111-1111-1111-1111-111111111111',
-        category_id: 'cat-wagyu',
+        category_id: '22222222-1111-1111-1111-111111111111',
         name: 'دبل واغيو هاوس سماش (Double Wagyu House Smash)',
         description: 'شريحتان من لحم الواغيو الأسترالي الفاخر بحواف مقرمشة، شريحتا جبن شيدر إنجليزي معتق، بصل مكرمل ببطء لمدة 4 ساعات، شرائح بيكون بقري مدخن، وصوص برجر هاوس المدخن في خبز بريوش محمص بالزبدة.',
         price: 46,
@@ -225,9 +225,9 @@ export const INITIAL_TENANTS: Record<string, TenantBundle> = {
         sort_order: 1,
       },
       {
-        id: 'prod-2',
+        id: 'd0000002-1111-1111-1111-111111111111',
         restaurant_id: '11111111-1111-1111-1111-111111111111',
-        category_id: 'cat-wagyu',
+        category_id: '22222222-1111-1111-1111-111111111111',
         name: 'بلاك ترفل واغيو رويال (Black Truffle Wagyu Royale)',
         description: 'لحم واغيو مشوي مع جبن غرويير سويسري ذائب، فطر بورتوبيلو وشيتاكي محمص بالزبدة والثوم، وأيولي الكمأة السوداء الإيطالية الفاخرة على خبز بريوش ذهبي.',
         price: 54,
@@ -254,9 +254,9 @@ export const INITIAL_TENANTS: Record<string, TenantBundle> = {
         sort_order: 2,
       },
       {
-        id: 'prod-3',
+        id: 'd0000003-1111-1111-1111-111111111111',
         restaurant_id: '11111111-1111-1111-1111-111111111111',
-        category_id: 'cat-wagyu',
+        category_id: '22222222-1111-1111-1111-111111111111',
         name: 'سموك هاوس بريسكت دبل (Smokehouse Brisket Double)',
         description: 'مزيج أسطوري يجمع شريحتي برجر أنجوس مع 80 جرام من لحم البريسكت المدخن ببطء لمدة 12 ساعة على حطب البلوط، حلقات بصل مقرمشة، جبن شيدر، وصوص باربكيو القيقب المدخن.',
         price: 52,
@@ -283,9 +283,9 @@ export const INITIAL_TENANTS: Record<string, TenantBundle> = {
         sort_order: 3,
       },
       {
-        id: 'prod-4',
+        id: 'd0000004-1111-1111-1111-111111111111',
         restaurant_id: '11111111-1111-1111-1111-111111111111',
-        category_id: 'cat-chicken',
+        category_id: '22222222-2222-1111-1111-111111111111',
         name: 'ميبل سيراتشا كريسبي تشيكن (Maple Sriracha Crispy)',
         description: 'صدر دجاج طازج مقرمش مغموس في جليز شراب القيقب الكندي الحار والسيراتشا، مع سلطة الكولسلو الأرجوانية المقرمشة ومخلل الشبت المنزلي وصوص الرانش بالأعشاب.',
         price: 38,
@@ -313,9 +313,9 @@ export const INITIAL_TENANTS: Record<string, TenantBundle> = {
         sort_order: 4,
       },
       {
-        id: 'prod-5',
+        id: 'd0000005-1111-1111-1111-111111111111',
         restaurant_id: '11111111-1111-1111-1111-111111111111',
-        category_id: 'cat-boxes',
+        category_id: '22222222-3333-1111-1111-111111111111',
         name: 'بوكس الجمعات الملكي (The Royal Gathering Box)',
         description: 'يحتوي على 4 برجر من اختيارك (واغيو سماش / ترفل / ميبل كريسبي)، مقلاة بطاطس البريسكت والجبن العائلية، 6 قطع تندرز دجاج مقرمشة، و4 صوصات حرفية.',
         price: 169,
@@ -341,9 +341,9 @@ export const INITIAL_TENANTS: Record<string, TenantBundle> = {
         sort_order: 5,
       },
       {
-        id: 'prod-6',
+        id: 'd0000006-1111-1111-1111-111111111111',
         restaurant_id: '11111111-1111-1111-1111-111111111111',
-        category_id: 'cat-sides',
+        category_id: '22222222-4444-1111-1111-111111111111',
         name: 'بطاطس البريسكت المدخن والشيدر (Smoked Brisket Loaded Fries)',
         description: 'بطاطس بقشرها مقرمشة ذهبية مغطاة بصلصة جبن الشيدر المعتق الدافئة، قطع لحم البريسكت المدخن الطري، هالبينو مخلل، بصل أخضر، وصوص تشيبوتلي أيولي.',
         price: 32,
@@ -369,9 +369,9 @@ export const INITIAL_TENANTS: Record<string, TenantBundle> = {
         sort_order: 6,
       },
       {
-        id: 'prod-7',
+        id: 'd0000007-1111-1111-1111-111111111111',
         restaurant_id: '11111111-1111-1111-1111-111111111111',
-        category_id: 'cat-drinks',
+        category_id: '22222222-5555-1111-1111-111111111111',
         name: 'ميلك شيك الشوكولاتة البلجيكية والكراميل المملح',
         description: 'آيس كريم فانيلا مدغشقر الحرفي مخفوق مع الشوكولاتة البلجيكية الداكنة وصوص الكراميل المملح وكريمة الخفق الطازجة.',
         price: 26,
@@ -398,7 +398,7 @@ export const INITIAL_TENANTS: Record<string, TenantBundle> = {
     ],
     gallery: [
       {
-        id: 'g1',
+        id: 'a0000001-1111-1111-1111-111111111111',
         restaurant_id: '11111111-1111-1111-1111-111111111111',
         title: 'صالة الطعام والمطبخ المفتوح',
         caption: 'تصميم داخلي دافئ يجمع بين الخشب الطبيعي والنحاس والإضاءة الخافتة أمام شواية اللهب المباشر',
@@ -407,7 +407,7 @@ export const INITIAL_TENANTS: Record<string, TenantBundle> = {
         is_visible: true,
       },
       {
-        id: 'g2',
+        id: 'a0000002-1111-1111-1111-111111111111',
         restaurant_id: '11111111-1111-1111-1111-111111111111',
         title: 'دبل واغيو هاوس سماش',
         caption: 'تحمير كراميلي متقن مع الجبن الذائب والبصل المكرمل',
@@ -416,7 +416,7 @@ export const INITIAL_TENANTS: Record<string, TenantBundle> = {
         is_visible: true,
       },
       {
-        id: 'g3',
+        id: 'a0000003-1111-1111-1111-111111111111',
         restaurant_id: '11111111-1111-1111-1111-111111111111',
         title: 'ولائم الجمعات الفاخرة',
         caption: 'تشكيلة متكاملة من البرجر الحرفي والبطاطس المحملة بالبريسكت',
@@ -425,7 +425,7 @@ export const INITIAL_TENANTS: Record<string, TenantBundle> = {
         is_visible: true,
       },
       {
-        id: 'g4',
+        id: 'a0000004-1111-1111-1111-111111111111',
         restaurant_id: '11111111-1111-1111-1111-111111111111',
         title: 'بلاك ترفل واغيو رويال',
         caption: 'فطر بري محمص بالزبدة مع أيولي الكمأة السوداء الإيطالية',
@@ -434,7 +434,7 @@ export const INITIAL_TENANTS: Record<string, TenantBundle> = {
         is_visible: true,
       },
       {
-        id: 'g5',
+        id: 'a0000005-1111-1111-1111-111111111111',
         restaurant_id: '11111111-1111-1111-1111-111111111111',
         title: 'بطاطس البريسكت المدخن',
         caption: 'قطع بريسكت مدخنة 12 ساعة مع الشيدر المعتق والهالبينو',
@@ -443,7 +443,7 @@ export const INITIAL_TENANTS: Record<string, TenantBundle> = {
         is_visible: true,
       },
       {
-        id: 'g6',
+        id: 'a0000006-1111-1111-1111-111111111111',
         restaurant_id: '11111111-1111-1111-1111-111111111111',
         title: 'المشروبات الحرفية والميلك شيك',
         caption: 'ميلك شيك بلجيكي وموهيتو باشن فروت منعش',
@@ -454,16 +454,16 @@ export const INITIAL_TENANTS: Record<string, TenantBundle> = {
     ],
     orders: [
       {
-        id: 'ord-101',
+        id: 'c0000001-1111-1111-1111-111111111111',
         restaurant_id: '11111111-1111-1111-1111-111111111111',
-        order_number: 'BH-9402',
+        order_number: 'ORD-20261113-001',
         customer_name: 'تركي العتيبي',
         customer_phone: '0551239876',
         fulfillment_type: 'pickup',
         notes: 'بدون مخلل في برجر الدجاج، والبطاطس إكسترا صوص',
         items: [
           {
-            product_id: 'prod-1',
+            product_id: 'd0000001-1111-1111-1111-111111111111',
             product_name: 'دبل واغيو هاوس سماش',
             size_name: 'دبل كلاسيك (220 جرام)',
             addons: ['بيكون بقري مدخن مقرمش', 'تحويل إلى وجبة (بطاطس + مشروب)'],
@@ -471,7 +471,7 @@ export const INITIAL_TENANTS: Record<string, TenantBundle> = {
             unit_price: 68,
           },
           {
-            product_id: 'prod-6',
+            product_id: 'd0000006-1111-1111-1111-111111111111',
             product_name: 'بطاطس البريسكت المدخن والشيدر',
             size_name: 'حجم مشاركة (Sharing Skillet)',
             addons: [],
@@ -487,9 +487,9 @@ export const INITIAL_TENANTS: Record<string, TenantBundle> = {
         created_at: '2026-11-13T12:45:00+03:00',
       },
       {
-        id: 'ord-102',
+        id: 'c0000002-1111-1111-1111-111111111111',
         restaurant_id: '11111111-1111-1111-1111-111111111111',
-        order_number: 'BH-9403',
+        order_number: 'ORD-20261113-002',
         customer_name: 'سارة الغامدي',
         customer_phone: '0508765432',
         fulfillment_type: 'delivery',
@@ -497,7 +497,7 @@ export const INITIAL_TENANTS: Record<string, TenantBundle> = {
         notes: 'الاتصال عند الوصول للبوابة',
         items: [
           {
-            product_id: 'prod-5',
+            product_id: 'd0000005-1111-1111-1111-111111111111',
             product_name: 'بوكس الجمعات الملكي (The Royal Gathering Box)',
             size_name: 'بوكس 4 أشخاص',
             addons: ['4 مشروبات موهيتو أو غازية'],
@@ -547,8 +547,8 @@ export const INITIAL_TENANTS: Record<string, TenantBundle> = {
       heading_font: 'Amiri',
       body_font: 'Tajawal',
       theme_mode: 'dark',
-      whatsapp_number: '966570207432',
-      phone: '0570207432',
+      whatsapp_number: '966535717670',
+      phone: '0535717670',
       address: 'حي البغدادية الغربية، شارع حمزة شحاتة، جدة',
       city: 'جدة',
       google_maps_url: 'https://maps.google.com/?q=Jeddah',
@@ -578,7 +578,7 @@ export const INITIAL_TENANTS: Record<string, TenantBundle> = {
     },
     banners: [
       {
-        id: 'sk-b1',
+        id: 'b0000001-2222-2222-2222-222222222222',
         restaurant_id: '22222222-2222-2222-2222-222222222222',
         title: 'بوكس الضيافة الملكي مع القهوة السعودية',
         subtitle: 'تشكيلة أساور الكنافة بالفستق والنوتيلا واللوتس مع دلة قهوة سعودية بالزعفران',
@@ -594,7 +594,7 @@ export const INITIAL_TENANTS: Record<string, TenantBundle> = {
     ],
     offers: [
       {
-        id: 'sk-off1',
+        id: 'f0000001-2222-2222-2222-222222222222',
         restaurant_id: '22222222-2222-2222-2222-222222222222',
         title: 'بوكس الضيافة الملكي مع القهوة السعودية',
         description: 'تشكيلة أساور الكنافة بالفستق والنوتيلا واللوتس مع دلة قهوة سعودية بالزعفران',
@@ -611,7 +611,7 @@ export const INITIAL_TENANTS: Record<string, TenantBundle> = {
     ],
     categories: [
       {
-        id: 'sk-cat-1',
+        id: '44444444-1111-1111-1111-111111111111',
         restaurant_id: '22222222-2222-2222-2222-222222222222',
         name: 'الكنافة الملكية والخاصة',
         slug: 'royal-kunafa',
@@ -623,9 +623,9 @@ export const INITIAL_TENANTS: Record<string, TenantBundle> = {
     ],
     products: [
       {
-        id: 'sk-prod-1',
+        id: 'd0000001-2222-2222-2222-222222222222',
         restaurant_id: '22222222-2222-2222-2222-222222222222',
-        category_id: 'sk-cat-1',
+        category_id: '44444444-1111-1111-1111-111111111111',
         name: 'كنافة عش البلبل بالفستق الحلبي واللوتس',
         description: 'خيوط كنافة ذهبية مقرمشة محشوة بالفستق الحلبي الفاخر وصوص اللوتس والشوكولاتة البلجيكية.',
         price: 54,
@@ -653,7 +653,7 @@ export const INITIAL_TENANTS: Record<string, TenantBundle> = {
     ],
     gallery: [
       {
-        id: 'sk-g1',
+        id: 'a0000001-2222-2222-2222-222222222222',
         restaurant_id: '22222222-2222-2222-2222-222222222222',
         title: 'صالة الضيافة والقهوة السعودية',
         caption: 'أجواء شرقية راقية لتقديم الكنافة الساخنة',
@@ -727,7 +727,7 @@ export const INITIAL_TENANTS: Record<string, TenantBundle> = {
     offers: [],
     categories: [
       {
-        id: 'os-cat-1',
+        id: '55555555-1111-1111-1111-111111111111',
         restaurant_id: '33333333-3333-3333-3333-333333333333',
         name: 'برجر وساندو كوبي واغيو',
         slug: 'kobe-sando',
@@ -739,9 +739,9 @@ export const INITIAL_TENANTS: Record<string, TenantBundle> = {
     ],
     products: [
       {
-        id: 'os-prod-1',
+        id: 'd0000001-3333-3333-3333-333333333333',
         restaurant_id: '33333333-3333-3333-3333-333333333333',
-        category_id: 'os-cat-1',
+        category_id: '55555555-1111-1111-1111-111111111111',
         name: 'واغيو كاتسو ساندو بالكمأة (Wagyu Truffle Sando)',
         description: 'توست شوكوبان ياباني محمص بالزبدة مع شريحة واغيو مقرمشة وصوص التونكاتسو المدخن.',
         price: 78,
