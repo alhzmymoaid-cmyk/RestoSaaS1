@@ -87,6 +87,14 @@ export default function RestaurantAdminDashboard({ initialBundle }: Props) {
     setTimeout(() => setSaveMessage(null), 4000);
   };
 
+  const handleSignOut = async () => {
+    const supabase = createClient();
+    if (supabase) {
+      await supabase.auth.signOut();
+    }
+    window.location.href = `/${bundle.restaurant.slug}/admin/login`;
+  };
+
   const notifyError = (msg: string) => {
     setSaveMessage(null);
     setErrorMessage(msg);
@@ -247,11 +255,11 @@ export default function RestaurantAdminDashboard({ initialBundle }: Props) {
         button_text: banBtnText.trim(),
         button_link: banBtnLink.trim() || '#menu',
         image_url: banImage,
-        starts_at: banStartsAt,
-        ends_at: banEndsAt,
+        starts_at: banStartsAt ? banStartsAt : null,
+        ends_at: banEndsAt ? banEndsAt : null,
       };
       if (supabase) {
-        const { error } = await supabase.from('banners').update(updates).eq('id', editingBannerId);
+        const { error } = await supabase.from('banners').update(updates).eq('id', editingBannerId).eq('restaurant_id', bundle.restaurant.id);
         if (error) return notifyError(error.message);
       }
       setBundle((prev) => ({
@@ -271,8 +279,8 @@ export default function RestaurantAdminDashboard({ initialBundle }: Props) {
         button_link: banBtnLink.trim() || '#menu',
         image_url: banImage,
         sort_order: bundle.banners.length + 1,
-        starts_at: banStartsAt,
-        ends_at: banEndsAt,
+        starts_at: banStartsAt ? banStartsAt : null,
+        ends_at: banEndsAt ? banEndsAt : null,
         is_active: true,
       };
       if (supabase) {
@@ -304,7 +312,7 @@ export default function RestaurantAdminDashboard({ initialBundle }: Props) {
     const nextState = !banner.is_active;
     const supabase = createClient();
     if (supabase) {
-      const { error } = await supabase.from('banners').update({ is_active: nextState }).eq('id', banner.id);
+      const { error } = await supabase.from('banners').update({ is_active: nextState }).eq('id', banner.id).eq('restaurant_id', bundle.restaurant.id);
       if (error) return notifyError(error.message);
     }
     setBundle((prev) => ({
@@ -317,7 +325,7 @@ export default function RestaurantAdminDashboard({ initialBundle }: Props) {
   const handleDeleteBanner = async (bannerId: string) => {
     const supabase = createClient();
     if (supabase) {
-      const { error } = await supabase.from('banners').delete().eq('id', bannerId);
+      const { error } = await supabase.from('banners').delete().eq('id', bannerId).eq('restaurant_id', bundle.restaurant.id);
       if (error) return notifyError(error.message);
     }
     setBundle((prev) => ({
@@ -344,11 +352,11 @@ export default function RestaurantAdminDashboard({ initialBundle }: Props) {
         offer_price: Number(offPrice) || 0,
         coupon_code: offCoupon.trim(),
         image_url: offImage,
-        starts_at: offStartsAt,
-        ends_at: offEndsAt,
+        starts_at: offStartsAt ? offStartsAt : null,
+        ends_at: offEndsAt ? offEndsAt : null,
       };
       if (supabase) {
-        const { error } = await supabase.from('offers').update(updates).eq('id', editingOfferId);
+        const { error } = await supabase.from('offers').update(updates).eq('id', editingOfferId).eq('restaurant_id', bundle.restaurant.id);
         if (error) return notifyError(error.message);
       }
       setBundle((prev) => ({
@@ -368,8 +376,8 @@ export default function RestaurantAdminDashboard({ initialBundle }: Props) {
         offer_price: Number(offPrice) || 0,
         coupon_code: offCoupon.trim(),
         image_url: offImage,
-        starts_at: offStartsAt,
-        ends_at: offEndsAt,
+        starts_at: offStartsAt ? offStartsAt : null,
+        ends_at: offEndsAt ? offEndsAt : null,
         is_active: true,
         sort_order: bundle.offers.length + 1,
       };
@@ -403,7 +411,7 @@ export default function RestaurantAdminDashboard({ initialBundle }: Props) {
     const nextState = !offer.is_active;
     const supabase = createClient();
     if (supabase) {
-      const { error } = await supabase.from('offers').update({ is_active: nextState }).eq('id', offer.id);
+      const { error } = await supabase.from('offers').update({ is_active: nextState }).eq('id', offer.id).eq('restaurant_id', bundle.restaurant.id);
       if (error) return notifyError(error.message);
     }
     setBundle((prev) => ({
@@ -416,7 +424,7 @@ export default function RestaurantAdminDashboard({ initialBundle }: Props) {
   const handleDeleteOffer = async (offerId: string) => {
     const supabase = createClient();
     if (supabase) {
-      const { error } = await supabase.from('offers').delete().eq('id', offerId);
+      const { error } = await supabase.from('offers').delete().eq('id', offerId).eq('restaurant_id', bundle.restaurant.id);
       if (error) return notifyError(error.message);
     }
     setBundle((prev) => ({
@@ -448,7 +456,7 @@ export default function RestaurantAdminDashboard({ initialBundle }: Props) {
         image_url: catImage,
       };
       if (supabase) {
-        const { error } = await supabase.from('categories').update(updates).eq('id', editingCategoryId);
+        const { error } = await supabase.from('categories').update(updates).eq('id', editingCategoryId).eq('restaurant_id', bundle.restaurant.id);
         if (error) return notifyError(error.message);
       }
       setBundle((prev) => ({
@@ -487,7 +495,7 @@ export default function RestaurantAdminDashboard({ initialBundle }: Props) {
     const nextVis = !cat.is_visible;
     const supabase = createClient();
     if (supabase) {
-      const { error } = await supabase.from('categories').update({ is_visible: nextVis }).eq('id', cat.id);
+      const { error } = await supabase.from('categories').update({ is_visible: nextVis }).eq('id', cat.id).eq('restaurant_id', bundle.restaurant.id);
       if (error) return notifyError(error.message);
     }
     setBundle((prev) => ({
@@ -508,8 +516,8 @@ export default function RestaurantAdminDashboard({ initialBundle }: Props) {
     const supabase = createClient();
     if (supabase) {
       await Promise.all([
-        supabase.from('categories').update({ sort_order: b.sort_order }).eq('id', a.id),
-        supabase.from('categories').update({ sort_order: a.sort_order }).eq('id', b.id),
+        supabase.from('categories').update({ sort_order: b.sort_order }).eq('id', a.id).eq('restaurant_id', bundle.restaurant.id),
+        supabase.from('categories').update({ sort_order: a.sort_order }).eq('id', b.id).eq('restaurant_id', bundle.restaurant.id),
       ]);
     }
 
@@ -525,7 +533,7 @@ export default function RestaurantAdminDashboard({ initialBundle }: Props) {
   const handleDeleteCategory = async (catId: string) => {
     const supabase = createClient();
     if (supabase) {
-      const { error } = await supabase.from('categories').delete().eq('id', catId);
+      const { error } = await supabase.from('categories').delete().eq('id', catId).eq('restaurant_id', bundle.restaurant.id);
       if (error) return notifyError(error.message);
     }
     setBundle((prev) => ({
@@ -594,7 +602,7 @@ export default function RestaurantAdminDashboard({ initialBundle }: Props) {
       };
 
       if (supabase) {
-        const { error } = await supabase.from('products').update(updates).eq('id', editingProductId);
+        const { error } = await supabase.from('products').update(updates).eq('id', editingProductId).eq('restaurant_id', bundle.restaurant.id);
         if (error) return notifyError(error.message);
       }
 
@@ -623,7 +631,7 @@ export default function RestaurantAdminDashboard({ initialBundle }: Props) {
         is_new: prodIsNew,
         sizes: parsedSizes,
         addons: parsedAddons,
-        views_count: 1,
+        views_count: 0,
         orders_count: 0,
         sort_order: bundle.products.length + 1,
       };
@@ -666,7 +674,8 @@ export default function RestaurantAdminDashboard({ initialBundle }: Props) {
       const { error } = await supabase
         .from('products')
         .update({ ...updates, updated_at: new Date().toISOString() })
-        .eq('id', prodId);
+        .eq('id', prodId)
+        .eq('restaurant_id', bundle.restaurant.id);
       if (error) return notifyError(error.message);
     }
     setBundle((prev) => ({
@@ -679,7 +688,7 @@ export default function RestaurantAdminDashboard({ initialBundle }: Props) {
   const handleDeleteProduct = async (prodId: string) => {
     const supabase = createClient();
     if (supabase) {
-      const { error } = await supabase.from('products').delete().eq('id', prodId);
+      const { error } = await supabase.from('products').delete().eq('id', prodId).eq('restaurant_id', bundle.restaurant.id);
       if (error) return notifyError(error.message);
     }
     setBundle((prev) => ({
@@ -719,7 +728,7 @@ export default function RestaurantAdminDashboard({ initialBundle }: Props) {
   const handleDeleteGalleryImage = async (imgId: string) => {
     const supabase = createClient();
     if (supabase) {
-      const { error } = await supabase.from('gallery_images').delete().eq('id', imgId);
+      const { error } = await supabase.from('gallery_images').delete().eq('id', imgId).eq('restaurant_id', bundle.restaurant.id);
       if (error) return notifyError(error.message);
     }
     setBundle((prev) => ({
@@ -738,7 +747,8 @@ export default function RestaurantAdminDashboard({ initialBundle }: Props) {
       const { error } = await supabase
         .from('orders')
         .update({ status, updated_at: new Date().toISOString() })
-        .eq('id', orderId);
+        .eq('id', orderId)
+        .eq('restaurant_id', bundle.restaurant.id);
       if (error) return notifyError(error.message);
     }
     setBundle((prev) => ({

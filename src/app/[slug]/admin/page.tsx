@@ -43,7 +43,7 @@ export default async function RestaurantAdminPage({ params }: PageProps) {
           )}
           <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
             <Link
-              href={`/${slug}/admin/login`}
+              href={`/${slug}/admin/login?redirect=/${slug}/admin`}
               className="px-5 py-2.5 rounded-xl bg-amber-500 text-slate-950 font-extrabold text-xs"
             >
               تسجيل الدخول بحساب مالك المطعم
@@ -68,31 +68,31 @@ export default async function RestaurantAdminPage({ params }: PageProps) {
       .from('restaurants')
       .select('*')
       .eq('slug', slug)
-      .single();
+      .maybeSingle();
 
-    if (restaurant) {
-      const [bannersRes, offersRes, categoriesRes, productsRes, galleryRes, ordersRes] = await Promise.all([
-        supabase.from('banners').select('*').eq('restaurant_id', restaurant.id).order('sort_order'),
-        supabase.from('offers').select('*').eq('restaurant_id', restaurant.id).order('sort_order'),
-        supabase.from('categories').select('*').eq('restaurant_id', restaurant.id).order('sort_order'),
-        supabase.from('products').select('*').eq('restaurant_id', restaurant.id).order('sort_order'),
-        supabase.from('gallery_images').select('*').eq('restaurant_id', restaurant.id).order('sort_order'),
-        supabase.from('orders').select('*').eq('restaurant_id', restaurant.id).order('created_at', { ascending: false }),
-      ]);
-
-      bundle = {
-        restaurant,
-        banners: bannersRes.data || [],
-        offers: offersRes.data || [],
-        categories: categoriesRes.data || [],
-        products: productsRes.data || [],
-        gallery: galleryRes.data || [],
-        orders: ordersRes.data || [],
-      };
+    if (!restaurant) {
+      notFound();
     }
-  }
 
-  if (!bundle) {
+    const [bannersRes, offersRes, categoriesRes, productsRes, galleryRes, ordersRes] = await Promise.all([
+      supabase.from('banners').select('*').eq('restaurant_id', restaurant.id).order('sort_order'),
+      supabase.from('offers').select('*').eq('restaurant_id', restaurant.id).order('sort_order'),
+      supabase.from('categories').select('*').eq('restaurant_id', restaurant.id).order('sort_order'),
+      supabase.from('products').select('*').eq('restaurant_id', restaurant.id).order('sort_order'),
+      supabase.from('gallery_images').select('*').eq('restaurant_id', restaurant.id).order('sort_order'),
+      supabase.from('orders').select('*').eq('restaurant_id', restaurant.id).order('created_at', { ascending: false }),
+    ]);
+
+    bundle = {
+      restaurant,
+      banners: bannersRes.data || [],
+      offers: offersRes.data || [],
+      categories: categoriesRes.data || [],
+      products: productsRes.data || [],
+      gallery: galleryRes.data || [],
+      orders: ordersRes.data || [],
+    };
+  } else {
     bundle = INITIAL_TENANTS[slug] || null;
   }
 

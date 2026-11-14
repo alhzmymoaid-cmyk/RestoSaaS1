@@ -25,10 +25,16 @@ export default async function SuperAdminSaaSPage() {
           <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
             {authCheck.reason}
           </p>
-          <div className="pt-2">
+          <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
+            <Link
+              href="/burger-house/admin/login?redirect=/super-admin"
+              className="inline-block px-5 py-2.5 rounded-xl bg-sky-500 text-slate-950 font-extrabold text-xs"
+            >
+              تسجيل الدخول بحساب Super Admin
+            </Link>
             <Link
               href="/burger-house"
-              className="inline-block px-5 py-2.5 rounded-xl bg-amber-500 text-slate-950 font-extrabold text-xs"
+              className="inline-block px-5 py-2.5 rounded-xl bg-slate-800 text-slate-200 font-extrabold text-xs"
             >
               العودة إلى الصفحة الرئيسية
             </Link>
@@ -49,9 +55,7 @@ export default async function SuperAdminSaaSPage() {
     ]);
     restaurants = restRes.data || [];
     profiles = profRes.data || [];
-  }
-
-  if (restaurants.length === 0) {
+  } else {
     restaurants = Object.values(INITIAL_TENANTS).map((b) => b.restaurant);
   }
 

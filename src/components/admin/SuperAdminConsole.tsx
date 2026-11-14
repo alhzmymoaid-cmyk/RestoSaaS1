@@ -32,6 +32,14 @@ export default function SuperAdminConsole({ initialRestaurants, initialProfiles 
     setTimeout(() => setStatusMessage(null), 4500);
   };
 
+  const handleSignOut = async () => {
+    const supabase = createClient();
+    if (supabase) {
+      await supabase.auth.signOut();
+    }
+    window.location.href = '/burger-house/admin/login?redirect=/super-admin';
+  };
+
   const notifyErr = (msg: string) => {
     setStatusMessage(null);
     setErrorMessage(msg);
@@ -109,6 +117,9 @@ export default function SuperAdminConsole({ initialRestaurants, initialProfiles 
         prev.map((r) => (r.id === restId ? { ...r, owner_email: ownerEmail } : r))
       );
       notify('تم تحديث بريد مالك المطعم وحفظه في قاعدة البيانات!');
+    } else {
+      const err = await res.json().catch(() => ({}));
+      notifyErr(err.error || 'تعذر تحديث بريد مالك المطعم');
     }
   };
 
@@ -150,12 +161,21 @@ export default function SuperAdminConsole({ initialRestaurants, initialProfiles 
               إدارة المطاعم المشتركة وحسابات الملاك وعزل البيانات (Supabase RLS)
             </h1>
           </div>
-          <Link
-            href="/burger-house"
-            className="px-4 py-2.5 rounded-xl bg-slate-900 border border-slate-800 text-xs font-bold hover:border-sky-500"
-          >
-            العودة إلى نموذج برجر هاوس ←
-          </Link>
+          <div className="flex items-center gap-2.5">
+            <button
+              type="button"
+              onClick={handleSignOut}
+              className="px-4 py-2.5 rounded-xl bg-rose-500/15 border border-rose-500/30 text-xs font-bold text-rose-300 hover:bg-rose-500/25"
+            >
+              تسجيل الخروج
+            </button>
+            <Link
+              href="/burger-house"
+              className="px-4 py-2.5 rounded-xl bg-slate-900 border border-slate-800 text-xs font-bold hover:border-sky-500"
+            >
+              العودة إلى نموذج برجر هاوس ←
+            </Link>
+          </div>
         </div>
 
         {statusMessage && (

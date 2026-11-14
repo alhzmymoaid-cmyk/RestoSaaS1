@@ -1,18 +1,39 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
+
+function getSafeInternalRedirect(rawRedirect: string | null, fallbackPath: string): string {
+  if (!rawRedirect) return fallbackPath;
+  const trimmed = rawRedirect.trim();
+  if (trimmed.startsWith('/') && !trimmed.startsWith('//') && !trimmed.includes('://')) {
+    return trimmed;
+  }
+  return fallbackPath;
+}
 
 export default function AdminLoginPage() {
   const router = useRouter();
   const params = useParams();
   const slug = (params?.slug as string) || 'burger-house';
+  const defaultTarget = `/${slug}/admin`;
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [targetPath, setTargetPath] = useState<string>(defaultTarget);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    try {
+      const sp = new URLSearchParams(window.location.search);
+      const redir = sp.get('redirect');
+      setTargetPath(getSafeInternalRedirect(redir, `/${slug}/admin`));
+    } catch {
+      setTargetPath(`/${slug}/admin`);
+    }
+  }, [slug]);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -21,18 +42,21 @@ export default function AdminLoginPage() {
 
     const supabase = createClient();
     if (!supabase) {
-      router.push(`/${slug}/admin`);
+      router.push(targetPath);
       return;
     }
 
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
+    const { error } = await supabase.auth.signInWithPassword({
+      email: email.trim(),
+      password,
+    });
     if (error) {
       setErrorMsg('بيانات الدخول غير صحيحة أو الحساب غير مصرح له بإدارة هذا المطعم.');
       setLoading(false);
       return;
     }
 
-    router.push(`/${slug}/admin`);
+    router.push(targetPath);
     router.refresh();
   };
 
@@ -43,9 +67,13 @@ export default function AdminLoginPage() {
           <span className="px-3 py-1 rounded-full text-xs font-bold bg-amber-500/15 text-amber-400">
             نظام الحماية وعزل المطاعم (Supabase RLS)
           </span>
-          <h1 className="text-2xl font-extrabold text-white">تسجيل دخول مالك المطعم</h1>
+          <h1 className="text-2xl font-extrabold text-white">
+            {targetPath.startsWith('/super-admin')
+              ? 'تسجيل دخول مدير النظام (Super Admin)'
+              : 'تسجيل دخول مالك المطعم'}
+          </h1>
           <p className="text-xs text-slate-400">
-            الرابط الخاص بالمطعم: <span className="text-amber-400 font-mono">/{slug}/admin</span>
+            الوجهة بعد الدخول: <span className="text-amber-400 font-mono">{targetPath}</span>
           </p>
         </div>
 
@@ -57,7 +85,7 @@ export default function AdminLoginPage() {
 
         <form onSubmit={handleLogin} className="space-y-4">
           <div>
-            <label className="text-xs font-bold text-slate-300 block mb-1.5">البريد الإلكتروني للمالك</label>
+            <label className="text-xs font-bold text-slate-300 block mb-1.5">البريد الإلكتروني</label>
             <input
               type="email"
               required

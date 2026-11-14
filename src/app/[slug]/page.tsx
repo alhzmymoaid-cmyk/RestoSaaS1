@@ -22,32 +22,32 @@ export default async function RestaurantPublicPage({ params }: PageProps) {
       .select('*')
       .eq('slug', slug)
       .eq('is_active', true)
-      .single();
+      .maybeSingle();
 
-    if (restaurant) {
-      await supabase.rpc('increment_restaurant_visit', { rest_id: restaurant.id });
-
-      const [bannersRes, offersRes, categoriesRes, productsRes, galleryRes] = await Promise.all([
-        supabase.from('banners').select('*').eq('restaurant_id', restaurant.id).eq('is_active', true).order('sort_order'),
-        supabase.from('offers').select('*').eq('restaurant_id', restaurant.id).eq('is_active', true).order('sort_order'),
-        supabase.from('categories').select('*').eq('restaurant_id', restaurant.id).eq('is_visible', true).order('sort_order'),
-        supabase.from('products').select('*').eq('restaurant_id', restaurant.id).eq('is_visible', true).order('sort_order'),
-        supabase.from('gallery_images').select('*').eq('restaurant_id', restaurant.id).eq('is_visible', true).order('sort_order'),
-      ]);
-
-      bundle = {
-        restaurant,
-        banners: bannersRes.data || [],
-        offers: offersRes.data || [],
-        categories: categoriesRes.data || [],
-        products: productsRes.data || [],
-        gallery: galleryRes.data || [],
-        orders: [],
-      };
+    if (!restaurant) {
+      notFound();
     }
-  }
 
-  if (!bundle) {
+    await supabase.rpc('increment_restaurant_visit', { rest_id: restaurant.id });
+
+    const [bannersRes, offersRes, categoriesRes, productsRes, galleryRes] = await Promise.all([
+      supabase.from('banners').select('*').eq('restaurant_id', restaurant.id).eq('is_active', true).order('sort_order'),
+      supabase.from('offers').select('*').eq('restaurant_id', restaurant.id).eq('is_active', true).order('sort_order'),
+      supabase.from('categories').select('*').eq('restaurant_id', restaurant.id).eq('is_visible', true).order('sort_order'),
+      supabase.from('products').select('*').eq('restaurant_id', restaurant.id).eq('is_visible', true).order('sort_order'),
+      supabase.from('gallery_images').select('*').eq('restaurant_id', restaurant.id).eq('is_visible', true).order('sort_order'),
+    ]);
+
+    bundle = {
+      restaurant,
+      banners: bannersRes.data || [],
+      offers: offersRes.data || [],
+      categories: categoriesRes.data || [],
+      products: productsRes.data || [],
+      gallery: galleryRes.data || [],
+      orders: [],
+    };
+  } else {
     bundle = INITIAL_TENANTS[slug] || null;
   }
 

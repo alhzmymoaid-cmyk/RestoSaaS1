@@ -5,26 +5,27 @@ import { verifySuperAdminAccess } from '@/lib/supabase/auth-helpers';
 import { z } from 'zod';
 
 const CreateTenantSchema = z.object({
-  name: z.string().min(2, 'اسم المطعم يجب أن يتكون من حرفين على الأقل'),
+  name: z.string().trim().min(2, 'اسم المطعم يجب أن يتكون من حرفين على الأقل'),
   slug: z
     .string()
+    .trim()
     .min(2)
     .regex(/^[a-z0-9-]+$/, 'الرابط المختصر يجب أن يحتوي على أحرف إنجليزية صغيرة وأرقام وشرطات فقط'),
   tagline: z.string().optional().default('قائمة طعام رقمية فاخرة'),
   city: z.string().optional().default('جدة'),
-  whatsapp_number: z.string().min(9, 'رقم واتساب غير صالح'),
+  whatsapp_number: z.string().trim().min(9, 'رقم واتساب غير صالح'),
   primary_color: z.string().regex(/^#[0-9A-Fa-f]{6}$/, 'كود اللون غير صالح'),
-  owner_email: z.string().email('البريد الإلكتروني للمالك غير صالح'),
+  owner_email: z.string().trim().email('البريد الإلكتروني للمالك غير صالح'),
   owner_id: z.string().uuid().optional().nullable(),
 });
 
 const UpdateTenantSchema = z.object({
-  id: z.string().uuid(),
+  id: z.string().uuid('معرف المطعم غير صالح'),
   is_active: z.boolean().optional(),
-  owner_email: z.string().email().optional(),
+  owner_email: z.string().trim().email('البريد الإلكتروني للمالك غير صالح').optional(),
   owner_id: z.string().uuid().optional().nullable(),
-  primary_color: z.string().optional(),
-  name: z.string().optional(),
+  primary_color: z.string().regex(/^#[0-9A-Fa-f]{6}$/, 'كود اللون غير صالح').optional(),
+  name: z.string().trim().min(2).optional(),
 });
 
 export async function GET() {
@@ -101,7 +102,7 @@ export async function POST(request: Request) {
       .from('restaurants')
       .select('*')
       .eq('id', newRestId)
-      .single();
+      .maybeSingle();
 
     return NextResponse.json({ tenant: createdTenant }, { status: 201 });
   } catch {
@@ -119,7 +120,10 @@ export async function PATCH(request: Request) {
     const body = await request.json();
     const parsed = UpdateTenantSchema.safeParse(body);
     if (!parsed.success) {
-      return NextResponse.json({ error: 'بيانات التحديث غير صالحة' }, { status: 400 });
+      return NextResponse.json(
+        { error: parsed.error.issues[0]?.message || 'بيانات التحديث غير صالحة' },
+        { status: 400 }
+      );
     }
 
     const supabase = createServerSupabase();
@@ -129,7 +133,6 @@ export async function PATCH(request: Request) {
 
     const { id, owner_email, ...otherUpdates } = parsed.data;
 
-    // إذا تم تعديل بريد المالك، نستدعي دالة assign_restaurant_owner لربط UUID المالك من auth.users وتحديث profiles تلقائياً
     if (owner_email) {
       const { error: assignErr } = await supabase.rpc('assign_restaurant_owner', {
         p_restaurant_id: id,
@@ -156,7 +159,7 @@ export async function PATCH(request: Request) {
       .from('restaurants')
       .select('*')
       .eq('id', id)
-      .single();
+      .maybeSingle();
 
     return NextResponse.json({ updated: updatedTenant }, { status: 200 });
   } catch {
@@ -172,13 +175,15 @@ export async function DELETE(request: Request) {
 
   const { searchParams } = new URL(request.url);
   const id = searchParams.get('id');
-  if (!id) {
-    return NextResponse.json({ error: 'معرف المطعم مطلوب للحذف' }, { status: 400 });
+  const parsedId = z.string().uuid('معرف المطعم غير صالح').safeParse(id);
+  if (!parsedId.success) {
+    return NextResponse.json({ error: 'معرف المطعم مطلوب وبصيغة UUID صحيحة للحذف' }, { status: 400 });
   }
 
   const supabase = createServerSupabase();
   if (supabase) {
-    const { error } = await supabase.from('restaurants').delete().eq('id', id);
+    const adminClient = createServiceRoleSupabase() || supabase;
+    const { error } = await adminClient.from('restaurants').delete().eq('id', parsedId.data);
     if (error) {
       return NextResponse.json({ error: error.message }, { status: 500 });
     }

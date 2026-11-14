@@ -90,8 +90,8 @@ export interface Banner {
   button_link: string;
   image_url: string;
   sort_order: number;
-  starts_at: string;
-  ends_at: string;
+  starts_at: string | null;
+  ends_at: string | null;
   is_active: boolean;
 }
 
@@ -105,8 +105,8 @@ export interface Offer {
   offer_price: number;
   coupon_code?: string;
   image_url: string;
-  starts_at: string;
-  ends_at: string;
+  starts_at: string | null;
+  ends_at: string | null;
   is_active: boolean;
   sort_order: number;
 }

@@ -29,7 +29,7 @@ export async function middleware(request: NextRequest) {
           response = NextResponse.next({
             request: { headers: request.headers },
           });
-          response.cookies.set({ name, value, ...options });
+          response.cookies.set({ name, value: '', ...options });
         },
       },
     });
@@ -39,6 +39,11 @@ export async function middleware(request: NextRequest) {
     } = await supabase.auth.getUser();
 
     const pathname = request.nextUrl.pathname;
+
+    // مسارات API تتولى إرجاع 401/403 بصيغة JSON بعد تحديث الجلسة أعلاه
+    if (pathname.startsWith('/api/')) {
+      return response;
+    }
 
     // 1. حماية مسار مدير النظام العام /super-admin
     if (pathname.startsWith('/super-admin') && !pathname.includes('/login')) {
